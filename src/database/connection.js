@@ -1,6 +1,9 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
+import {dotenv} from "dotenv"
 
-mongoose.connect('mongodb+srv://dupla:dupladouglashirrua@projeto.mr6kua4.mongodb.net/?retryWrites=true&w=majoritymongodb://localhost:27017/project', {
+const conexao = process.env.DB_CONNECTION
+
+mongoose.connect(conexao, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });

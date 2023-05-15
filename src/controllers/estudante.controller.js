@@ -11,7 +11,7 @@ import estudanteSchema from "../utils/schemaValidation.js";
 
 const estudanteRoutes = Router();
 
-estudanteRoutes.get("/", async (req, res) => {
+estudanteRoutes.get("/", authenticationMiddleware, async (req, res) => {
   const estudante = await listarEstudante();
   return res.status(200).json(estudante);
 });
@@ -30,12 +30,12 @@ estudanteRoutes.post("/", async (req, res) => {
     throw { status: 401, message: error.message };
   }
 
-  const studentCreated = await createStudent(req.body);
+  const estudanteCriado = await criarEstudante(req.body);
 
-  return res.status(200).json(studentCreated);
+  return res.status(200).json(estudanteCriado);
 });
 
-estudanteRoutes.put("/:id", async (req, res) => {
+estudanteRoutes.put("/:id", authenticationMiddleware,async (req, res) => {
   const { id } = req.params;
 
   const { error } = await estudanteSchema.validate(req.body);
@@ -48,10 +48,15 @@ estudanteRoutes.put("/:id", async (req, res) => {
   return res.status(200).json(estudanteAtualizado);
 });
 
-estudanteRoutes.delete("/:id", async (req, res) => {
+estudanteRoutes.delete("/:id", authenticationMiddleware, async (req, res) => {
   const { id } = req.params;
   const estudanteDeletado = await deletarEstudante(id);
   return res.status(200).json(estudanteDeletado);
 });
+
+estudanteRoutes.post('/login', async (req, res) => {
+  const token = await authentication(req.body);
+  res.status(200).json(token);
+})
 
 export default estudanteRoutes;

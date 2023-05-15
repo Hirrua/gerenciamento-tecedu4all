@@ -1,6 +1,5 @@
 import bycript from "bcrypt"
 import Estudante from "../models/estudante.model.js"
-import Users from "../models/user.models.js"
 import { generateJWTToken} from "../utils/jwt.js"
 
 const criarEstudante = async (dados) => {
@@ -22,7 +21,7 @@ const atualizarEstudante  = async (id, dados) => {
 }
 
 const deletarEstudante = async (id) => {
-  const estudante = await Estudante.findByIdAndUpdate(id, { situacao: true }, { new: true })
+  const estudante = await Estudante.findByIdAndUpdate(id, { situacao: true })
   return estudante
 }
 
@@ -31,15 +30,15 @@ const authentication = async ({ email, password }) => {
     throw { status: 401, message: "Existe campos em branco!" }
   }
 
-  const user = await Users.findOne({ email })
+  const estudante = await Estudante.findOne({ email })
 
-  const comparePassword = bycript.compareSync(password, user.password)
+  const comparePassword = bycript.compareSync(password, estudante.password)
 
-  if (!user || !comparePassword) {
+  if (!estudante || !comparePassword) {
     throw{ status: 401, message: "Usuario ou senha invalidos!" }
   }
 
-  const { _id, name } = user
+  const { _id, name } = estudante
 
   const token = generateJWTToken({ _id, name, email })
   return {token}

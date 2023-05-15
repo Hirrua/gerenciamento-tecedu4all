@@ -5,11 +5,13 @@ const schema = new mongoose.Schema({
   name: String,
   image_profile: String,
   email: String,
+  password: String,
   biografia: String,
   experiencia: String,
   git_hub: String,
   linkedin: String,
   status: Boolean,
+  professor_responsavel: { type:mongoose.Types.ObjectId, ref: "professor" }
 }, { collection: 'professor' });
 
 const Professor = mongoose.model('professor', schema);
