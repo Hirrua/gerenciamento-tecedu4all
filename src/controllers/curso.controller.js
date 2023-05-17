@@ -1,12 +1,12 @@
 import { Router } from "express"
 import {
   criarCurso,
-  listarcurso,
+  listarCurso,
   atualizarCurso,
   deletarCurso
 } from "../services/curso.service.js"
-
-import cursoSchema from "../utils/schemaValidation.js"
+import authenticationMiddleware from '../middlewares/auth.middleware.js'
+import {cursoSchema} from "../utils/schemaValidation.js"
 
 const cursoRoutes = Router();
 

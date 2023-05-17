@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import {dotenv} from "dotenv"
+import dotenv from "dotenv"
 
 const conexao = process.env.DB_CONNECTION
 

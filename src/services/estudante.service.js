@@ -3,6 +3,15 @@ import Estudante from "../models/estudante.model.js"
 import { generateJWTToken} from "../utils/jwt.js"
 
 const criarEstudante = async (dados) => {
+
+  const {cpf, name, email} = (dados)
+
+  const estudanteExistente = await Estudante.findOne({$or: [{cpf}, {name}, {email}]})
+
+  if (estudanteExistente) {
+    throw { status: 400, message: "Já existe um estudante com esses dados." }
+  }
+
   dados.password = bycript.hashSync(dados.password, 8)
   const estudante = new Schema(dados)
   const resultado = await estudante.save()
@@ -10,7 +19,11 @@ const criarEstudante = async (dados) => {
 }
 
 const listarEstudante = async (id) => {
-  const estudante = await Estudante.findById(id).select("-password")
+  if (id){
+    const estudante = await Estudante.findById(id).select('-password')
+    return estudante
+  }
+    const estudante = await Estudante.findById(id).select("-password")
   return estudante
 }
 

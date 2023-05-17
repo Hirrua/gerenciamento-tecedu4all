@@ -7,7 +7,7 @@ import {
 } from "../services/estudante.service.js";
 import authenticationMiddleware from "../middlewares/auth.middleware.js";
 
-import estudanteSchema from "../utils/schemaValidation.js";
+import {estudanteSchema} from "../utils/schemaValidation.js";
 
 const estudanteRoutes = Router();
 

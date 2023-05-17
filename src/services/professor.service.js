@@ -8,13 +8,30 @@ const criarProfessor = async (dados, isProfessor) => {
     throw{ status: 401, message: "Apenas professores podem cadastrar novos professores!" }
   }
 
+  const professorExistente = await Professor.findOne({
+    $and: [
+      { _id: { $ne: id } },
+      { $or: [{ name }, { email }] }
+    ]
+  })
+
+  if (professorExistente) {
+    throw { status: 400, message: "Já existe um professor com esse dados!" }
+  }
+
   dados.password = bycript.hashSync(dados.password, 8)
+  
   const professor = new Schema(dados)
   const resultado = await professor.save()
   return resultado
 }
 
 const listarProfessor = async (id) => {
+  if (id){
+    const professor= await Professor.findById(id).select('-password')
+    return professor
+  }  
+
   const professor = await Professor.findById(id).select("-password")
   return professor
 }
@@ -24,8 +41,22 @@ const atualizarProfessor  = async (id, dados, isProfessor) => {
   if (isProfessor){
     throw{ status: 401, message: "Apenas professores podem cadastrar novos professores!" }
   }
+
+  const { name, email } = dados;
+
+  const professorExistente = await Professor.findOne({
+    $and: [
+      { _id: { $ne: id } },
+      { $or: [{ name }, { email }] }
+    ]
+  })
+
+  if (professorExistente) {
+    throw { status: 400, message: "Já existe um professor com esses dados." };
+  }
   
   dados.password = bycript.hashSync(dados.password, 8)
+
   const professor = await Professor.findByIdAndUpdate(id, dados, { new: true})
   return professor
 }
@@ -55,7 +86,7 @@ const authentication = async ({ email, password }) => {
 
   const { _id, name } = professor
 
-  const token = generateJWTToken({ _id, name, email })
+  const token = generateJWTToken({ _id, name, email, isProfessor: true })
   return {token}
 }
 
