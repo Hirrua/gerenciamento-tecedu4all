@@ -23,7 +23,7 @@ const listarEstudante = async (id) => {
     const estudante = await Estudante.findById(id).select('-password')
     return estudante
   }
-    const estudante = await Estudante.findById(id).select("-password")
+    const estudante = await Estudante.find().select("-password")
   return estudante
 }
 
