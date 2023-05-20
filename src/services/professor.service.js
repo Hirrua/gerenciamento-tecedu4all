@@ -2,9 +2,17 @@ import bycript from "bcrypt"
 import Professor from "../models/professor.model.js"
 import { generateJWTToken} from "../utils/jwt.js"
 
-const criarProfessor = async (dados, isProfessor) => {
+const criarProfessor = async (dados, isProfessor, imagePath) => {
 
-  if (isProfessor){
+  const { name, email } = dados;
+
+  const existingStudent = await Teacher.findOne({ $or: [{ name }, { email }] });
+
+  if (existingStudent) {
+    throw { status: 400, message: "Já existe um professor com esses dados." };
+  }
+
+  if (!isProfessor){
     throw{ status: 401, message: "Apenas professores podem cadastrar novos professores!" }
   }
 
@@ -20,6 +28,7 @@ const criarProfessor = async (dados, isProfessor) => {
   }
 
   dados.password = bycript.hashSync(dados.password, 8)
+  dados.imagem_perfil = imagePath
   
   const professor = new Schema(dados)
   const resultado = await professor.save()
@@ -38,11 +47,11 @@ const listarProfessor = async (id) => {
 
 const atualizarProfessor  = async (id, dados, isProfessor) => {
   
-  if (isProfessor){
+  const { name, email } = dados;
+
+  if (!isProfessor){
     throw{ status: 401, message: "Apenas professores podem cadastrar novos professores!" }
   }
-
-  const { name, email } = dados;
 
   const professorExistente = await Professor.findOne({
     $and: [

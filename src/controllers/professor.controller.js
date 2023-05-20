@@ -6,6 +6,7 @@ import {
   deletarProfessor
 } from "../services/professor.service.js";
 import authenticationMiddleware from "../middlewares/auth.middleware.js"
+import { upload } from "../middlewares/upload.middleware.js"
 
 import {professorSchema} from "../utils/schemaValidation.js"
 
@@ -23,10 +24,10 @@ professorRoutes.get("/:id", authenticationMiddleware, async (req, res) => {
   return res.status(200).json(professor);
 });
 
-professorRoutes.post("/", authenticationMiddleware, async (req, res) => {
+professorRoutes.post("/", authenticationMiddleware, upload.single('imagem'), async (req, res) => {
   const { error } = await professorSchema.validate(req.body);
 
-  if (error) {
+  if (error) {  
     throw { status: 401, message: error.message };
   }
 

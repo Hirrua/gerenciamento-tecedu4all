@@ -2,7 +2,7 @@ import Curso from "../models/curso.model.js"
 
 const criarCurso = async (dados, isProfessor) => {
   
-  if (isProfessor){
+  if (! isProfessor){
     throw{ status: 401, message: "Apenas professores podem cadastrar novos professores!" }
   }
   
@@ -11,14 +11,14 @@ const criarCurso = async (dados, isProfessor) => {
   return resultado
 }
 
-const listarCurso = async (id) => {
+const listarCurso = async (id) => { 
   const curso = await Curso.findById(id)
   return curso
 }
 
 const atualizarCurso  = async (id, dados, isProfessor) => {
 
-  if (isProfessor){
+  if (!isProfessor){
     throw{ status: 401, message: "Apenas professores podem cadastrar novos professores!" }
   }
 
@@ -26,9 +26,19 @@ const atualizarCurso  = async (id, dados, isProfessor) => {
   return curso
 }
 
+const listarInfoCurso = async (nome) => {
+  const curso = await Curso.findOne({ name: nome })
+   .populate("professor_responsavel", "name email")
+   .populate({
+     path: "matriculas",
+     populate: { path: "estudante", select: "name email" },
+   })
+   return curso;
+}
+  
 const deletarCurso = async (id, isProfessor) => {
 
-  if (isProfessor){
+  if (!isProfessor){
     throw{ status: 401, message: "Apenas professores podem cadastrar novos professores!" }
   }
 
@@ -41,4 +51,5 @@ export {
   listarCurso,
   atualizarCurso,
   deletarCurso,
+  listarInfoCurso
 }

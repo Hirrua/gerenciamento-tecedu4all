@@ -3,7 +3,8 @@ import {
   criarCurso,
   listarCurso,
   atualizarCurso,
-  deletarCurso
+  deletarCurso,
+  listarInfoCurso
 } from "../services/curso.service.js"
 import authenticationMiddleware from '../middlewares/auth.middleware.js'
 import {cursoSchema} from "../utils/schemaValidation.js"
@@ -20,6 +21,21 @@ cursoRoutes.get("/:id",  async (req, res) => {
 
   const curso = await listarcurso(id);
   return res.status(200).json(curso);
+});
+
+cursoRoutes.get("info_curso/", async (req, res) => {
+  const { nome } = req.query;
+
+  try {    
+    const curso = await listarInfoCurso(nome);
+    if (!curso) {
+      throw { status: 404, message: "Curso não encontrado" };
+    }
+
+    res.status(200).json(curso);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message });
+  }
 });
 
 cursoRoutes.post("/",  authenticationMiddleware, async (req, res) => {

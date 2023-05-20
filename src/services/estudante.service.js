@@ -28,6 +28,20 @@ const listarEstudante = async (id) => {
 }
 
 const atualizarEstudante  = async (id, dados) => {
+
+  const [{cpf}, {name}, {email}] = dados
+
+  const estudanteExistente = await Estudante.findOne({
+    $and: [
+      { _id: { $ne: id } },
+      { $or: [{ cpf }, { name }, { email }] }
+    ]
+  })
+  
+  if (estudanteExistente) {
+    throw { status: 400, message: "Já existe um estudante com esses dados." }
+  }
+
   dados.password = bycript.hashSync(dados.password, 8)
   const estudante = await Estudante.findByIdAndUpdate(id, dados, { new: true})
   return estudante
