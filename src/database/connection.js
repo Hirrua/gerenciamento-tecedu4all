@@ -1,9 +1,8 @@
 import mongoose from "mongoose"
 import dotenv from "dotenv"
+dotenv.config()
 
-const conexao = process.env.DB_CONNECTION
-
-mongoose.connect(conexao, {
+mongoose.connect(process.env.MONGODB, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
